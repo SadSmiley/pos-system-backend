@@ -7,7 +7,6 @@ require('dotenv').config();
 
 import * as middlewares from './middlewares';
 import api from './api';
-import MessageResponse from './interfaces/MessageResponse';
 
 const app = express();
 
@@ -16,15 +15,18 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 
-app.get<{}, MessageResponse>('/', (req, res) => {
-  res.json({
-    message: '🦄🌈✨👋🌎🌍🌏✨🌈🦄',
-  });
-});
-
 app.use('/api/v1', api);
 
 app.use(middlewares.notFound);
 app.use(middlewares.errorHandler);
+
+process.on('unhandledRejection', (reason: string, p: Promise<any>) => {
+  console.error('Unhandled Rejection at: Promise', p, 'reason:', reason);
+});
+
+process.on('uncaughtException', (error: Error) => {
+  console.error(error);
+  process.exit(1);
+});
 
 export default app;

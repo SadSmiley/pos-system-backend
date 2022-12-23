@@ -1,41 +1,49 @@
 import { Router } from 'express';
 import { ParamsWithId } from '../../interfaces/ParamsWithId';
+import { SearchParams } from '../../interfaces/SearchParams';
 
 import { validateRequest } from '../../middlewares';
-import * as TodoHandlers from './todos.handlers';
-import { Todo } from './todos.model';
+import * as ProductController from './products.controller';
+import { Product } from './products.model';
 
 const router = Router();
 
-router.get('/', TodoHandlers.findAll);
+router.get('/', ProductController.findAll);
 router.get(
   '/:id',
   validateRequest({
     params: ParamsWithId,
   }),
-  TodoHandlers.findOne,
+  ProductController.findOne,
 );
 router.post(
   '/',
   validateRequest({
-    body: Todo,
+    body: Product,
   }),
-  TodoHandlers.createOne,
+  ProductController.createOne,
 );
 router.put(
   '/:id',
   validateRequest({
     params: ParamsWithId,
-    body: Todo,
+    body: Product,
   }),
-  TodoHandlers.updateOne,
+  ProductController.updateOne,
 );
 router.delete(
   '/:id',
   validateRequest({
     params: ParamsWithId,
   }),
-  TodoHandlers.deleteOne,
+  ProductController.deleteOne,
+);
+router.get(
+  '/search/:name',
+  validateRequest({
+    params: SearchParams,
+  }),
+  ProductController.search,
 );
 
 export default router;

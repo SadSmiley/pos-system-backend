@@ -1,7 +1,7 @@
 import express from 'express';
 
 import MessageResponse from '../interfaces/MessageResponse';
-import todos from './todos/todos.routes';
+import products from './products/products.routes';
 
 const router = express.Router();
 
@@ -11,6 +11,6 @@ router.get<{}, MessageResponse>('/', (req, res) => {
   });
 });
 
-router.use('/todos', todos);
+router.use('/products', products);
 
 export default router;
