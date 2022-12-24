@@ -8,6 +8,12 @@ const { AppError } = classes;
 const { HttpErrorCode } = enums;
 
 export default class ProductService {
+  cachedData: { [key: string]: Product };
+
+  constructor() {
+    this.cachedData = {};
+  }
+
   async findAll() {
     const products = await Products.find().toArray();
     return products;
@@ -35,6 +41,7 @@ export default class ProductService {
         false,
       );
     }
+    this.cachedData[result._id.toString()] = result;
     return result;
   }
 
@@ -81,5 +88,51 @@ export default class ProductService {
       $text: { $search: query.toLowerCase().trim() },
     }).toArray();
     return products;
+  }
+
+  // update product quantity
+  async updateQuantity(id: string, quantity: number) {
+    const result = await Products.findOneAndUpdate(
+      {
+        _id: new ObjectId(id),
+      },
+      {
+        $inc: { countInStock: -quantity },
+      },
+      {
+        returnDocument: 'after',
+      },
+    );
+    if (!result.value) {
+      throw new AppError(
+        HttpErrorCode.NotFound,
+        `Product with id "${id}" not found.`,
+        false,
+      );
+    }
+    return result;
+  }
+
+  // validate product quantity
+  async validateQuantity(id: string, quantity: number) {
+    const product =
+      this.cachedData[id] ||
+      (await Products.findOne({
+        _id: new ObjectId(id),
+      }));
+    if (!product) {
+      throw new AppError(
+        HttpErrorCode.NotFound,
+        `Product with id "${id}" not found.`,
+        false,
+      );
+    }
+    if (product.countInStock < quantity) {
+      throw new AppError(
+        HttpErrorCode.BadRequest,
+        `Product with id "${id}" is out of stock.`,
+        false,
+      );
+    }
   }
 }

@@ -1,3 +1,22 @@
+# TODO List
+
+List of tasks for this side project
+
+### Todo
+
+### In Progress
+
+- [ ] Add Categories in Product Module
+### Done ✓
+
+- [x] Products
+- [x] Transactions
+- [x] Product Categories
+  - [x] Create
+  - [x] Find All
+  - [x] Update
+  - [x] Delete
+
 # Express API Server for POS System
 
 Includes API Server utilities:
