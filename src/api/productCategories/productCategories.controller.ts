@@ -3,8 +3,8 @@ import { Response, Request, NextFunction } from 'express';
 import { ParamsWithId } from '../../interfaces/ParamsWithId';
 import { ProductCategoryWithId, ProductCategory } from './productCategories.model';
 
-import ProductCategorieservice from './productCategories.service';
-const ProductCategorieserviceInstance = new ProductCategorieservice();
+import ProductCategoryService from './productCategories.service';
+const ProductCategoryServiceInstance = new ProductCategoryService();
 
 export async function findAll(
   req: Request,
@@ -12,7 +12,7 @@ export async function findAll(
   next: NextFunction,
 ) {
   try {
-    const productCategories = await ProductCategorieserviceInstance.findAll();
+    const productCategories = await ProductCategoryServiceInstance.findAll();
     res.json(productCategories);
   } catch (error) {
     next(error);
@@ -25,7 +25,7 @@ export async function createOne(
   next: NextFunction,
 ) {
   try {
-    const insertResult = await ProductCategorieserviceInstance.createOne(req.body);
+    const insertResult = await ProductCategoryServiceInstance.createOne(req.body);
     res.status(201);
     res.json({
       _id: insertResult.insertedId,
@@ -42,7 +42,7 @@ export async function findOne(
   next: NextFunction,
 ) {
   try {
-    const result = await ProductCategorieserviceInstance.findOne(req.params.id);
+    const result = await ProductCategoryServiceInstance.findOne(req.params.id);
     res.json(result);
   } catch (error) {
     next(error);
@@ -55,7 +55,7 @@ export async function updateOne(
   next: NextFunction,
 ) {
   try {
-    const result = await ProductCategorieserviceInstance.updateOne(
+    const result = await ProductCategoryServiceInstance.updateOne(
       req.params.id,
       req.body,
     );
@@ -71,21 +71,8 @@ export async function deleteOne(
   next: NextFunction,
 ) {
   try {
-    await ProductCategorieserviceInstance.deleteOne(req.params.id);
+    await ProductCategoryServiceInstance.deleteOne(req.params.id);
     res.status(204).end();
-  } catch (error) {
-    next(error);
-  }
-}
-
-export async function search(
-  req: Request<{ name: string }, ProductCategoryWithId[], {}>,
-  res: Response<ProductCategoryWithId[]>,
-  next: NextFunction,
-) {
-  try {
-    const productCategories = await ProductCategorieserviceInstance.search(req.params.name);
-    res.json(productCategories);
   } catch (error) {
     next(error);
   }

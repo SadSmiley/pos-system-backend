@@ -1,83 +1,40 @@
 import { Products, Product } from './products.model';
 import { ObjectId } from 'mongodb';
 import utils from 'utils';
+import Service from '../service';
+
+import ProductCategoryService from '../productCategories/productCategories.service';
 
 // Extract classes and enums from utils
 const { classes, enums } = utils;
 const { AppError } = classes;
 const { HttpErrorCode } = enums;
 
-export default class ProductService {
-  cachedData: { [key: string]: Product };
-
+export default class ProductService extends Service {
   constructor() {
-    this.cachedData = {};
-  }
-
-  async findAll() {
-    const products = await Products.find().toArray();
-    return products;
+    super(Products, Product);
   }
 
   async createOne(data: Product) {
-    const insertResult = await Products.insertOne(data);
-    if (!insertResult.acknowledged)
-      throw new AppError(
-        HttpErrorCode.BadRequest,
-        'Error inserting product.',
-        false,
-      );
-    return insertResult;
-  }
-
-  async findOne(id: string) {
-    let result = await Products.findOne({
-      _id: new ObjectId(id),
-    });
-    if (!result) {
-      throw new AppError(
-        HttpErrorCode.NotFound,
-        `Product with id "${id}" not found.`,
-        false,
-      );
+    // validate categoryId if it exists in the database
+    if (data.categoryId) {
+      const productCategoryService = new ProductCategoryService();
+      try {
+        await productCategoryService.findOne(data.categoryId);
+      } catch (e) {
+        if (e instanceof AppError && e.httpCode === HttpErrorCode.NotFound) {
+          throw new AppError(
+            HttpErrorCode.NotFound,
+            `Product category with id "${data.categoryId}" not found.`,
+            false,
+          );
+        }
+      }
     }
-    this.cachedData[result._id.toString()] = result;
+
+    const result = await super.createOne(data);
+      
     return result;
-  }
-
-  async updateOne(id: string, data: Product) {
-    const result = await Products.findOneAndUpdate(
-      {
-        _id: new ObjectId(id),
-      },
-      {
-        $set: data,
-      },
-      {
-        returnDocument: 'after',
-      },
-    );
-    if (!result.value) {
-      throw new AppError(
-        HttpErrorCode.NotFound,
-        `Product with id "${id}" not found.`,
-        false,
-      );
-    }
-    return result;
-  }
-
-  async deleteOne(id: string) {
-    const result = await Products.findOneAndDelete({
-      _id: new ObjectId(id),
-    });
-    if (!result.value) {
-      throw new AppError(
-        HttpErrorCode.NotFound,
-        `Product with id "${id}" not found.`,
-        false,
-      );
-    }
   }
 
   async search(query: string) {

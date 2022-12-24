@@ -2,8 +2,8 @@ import { Response, Request, NextFunction } from 'express';
 import { CartBody } from '../../interfaces/CartBody';
 import { OrderInsertOneResult } from '../orders/orders.model';
 import { TransactionInsertOneResult } from './transactions.model';
-import TransactionService from './transactions.service';
-const TransactionServiceInstance = new TransactionService();
+import CartService from '../carts/carts.service';
+const CartServiceInstance = new CartService();
 
 export async function checkout(
   req: Request<{}, { transactions: TransactionInsertOneResult[], order: OrderInsertOneResult }, CartBody>,
@@ -11,7 +11,7 @@ export async function checkout(
   next: NextFunction,
 ) {
   try {
-    const transaction = await TransactionServiceInstance.checkout(req.body.products);
+    const transaction = await CartServiceInstance.checkout(req.body.products);
     res.status(201);
     res.send(transaction);
   } catch (error) {

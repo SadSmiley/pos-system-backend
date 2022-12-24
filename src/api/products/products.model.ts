@@ -1,4 +1,4 @@
-import { WithId } from 'mongodb';
+import { ObjectId, WithId } from 'mongodb';
 import * as z from 'zod';
 
 import { db } from '../../db';
@@ -8,6 +8,15 @@ export const Product = z.object({
   price: z.number().min(0),
   image: z.string().min(1).trim(),
   countInStock: z.number().min(0).default(0),
+  categoryId: z.string().min(1).trim().refine((val) => {
+    try {
+      return new ObjectId(val);
+    } catch (error) {
+      return false;
+    }
+  }, {
+    message: 'Invalid ObjectId',
+  }),
 });
 
 export type Product = z.infer<typeof Product>;

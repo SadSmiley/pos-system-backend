@@ -5,8 +5,8 @@ import { db } from '../../db';
 
 export const ProductCategory = z.object({
   name: z.string().min(1).trim(),
-  description: z.string().trim().nullable(),
-  image: z.string().trim().nullable(),
+  description: z.string().trim().default(''),
+  image: z.string().trim().default(''),
 });
 
 export type ProductCategory = z.infer<typeof ProductCategory>;

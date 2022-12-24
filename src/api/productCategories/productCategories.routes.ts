@@ -38,12 +38,5 @@ router.delete(
   }),
   ProductCategoryController.deleteOne,
 );
-router.get(
-  '/search/:name',
-  validateRequest({
-    params: SearchParams,
-  }),
-  ProductCategoryController.search,
-);
 
 export default router;
