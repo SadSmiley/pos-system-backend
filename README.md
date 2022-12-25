@@ -22,6 +22,7 @@ List of tasks for this side project
   - [x] Update
   - [x] Delete
 - [x] Add Categories in Product Module
+- [x] Check Last Order Number
 
 # Express API Server for POS System
 

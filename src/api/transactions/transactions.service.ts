@@ -1,8 +1,8 @@
 import { Transactions, Transaction } from './transactions.model';
-import Service from '../service';
+import { CRUDService } from '../service';
 
-export default class TransactionService extends Service {
+export default class TransactionService extends CRUDService {
   constructor() {
-    super(Transactions, Transaction);
+    super(Transactions, Transaction, 'Transaction');
   }
 }

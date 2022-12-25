@@ -1,6 +1,7 @@
 import { Response, Request, NextFunction } from 'express';
 
 import { ParamsWithId } from '../../interfaces/ParamsWithId';
+import { ParamsWithUPC } from '../../interfaces/ParamsWithUPC';
 import { ProductWithId, Product } from './products.model';
 
 import ProductService from './products.service';
@@ -87,6 +88,16 @@ export async function search(
     const products = await ProductServiceInstance.search(req.params.name);
     res.json(products);
   } catch (error) {
+    next(error);
+  }
+}
+
+export async function findByUPC(req: Request<{}, ProductWithId, ParamsWithUPC>, res: Response<ProductWithId>, next: NextFunction) {
+  try {
+    const products = await ProductServiceInstance.findByUPC(req.body.upc);
+    res.json(products);
+  }
+  catch (error) {
     next(error);
   }
 }

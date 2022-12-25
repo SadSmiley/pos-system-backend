@@ -6,22 +6,25 @@ const { classes, enums } = utils;
 const { AppError } = classes;
 const { HttpErrorCode } = enums;
 
-export default class Service {
+export class CRUDService {
   cachedData: { [key: string]: any };
 
   collection: any;
 
   type: any;
 
-  constructor(collection: any, type: any) {
+  name: string;
+
+  constructor(collection: any, type: any, name: string) {
     this.cachedData = {};
     this.collection = collection;
     this.type = type;
+    this.name = name;
   }
 
   async findAll() {
-    const products = await this.collection.find().toArray();
-    return products;
+    const data = await this.collection.find().toArray();
+    return data;
   }
 
   async createOne(data: this['type']) {
@@ -29,7 +32,7 @@ export default class Service {
     if (!insertResult.acknowledged)
       throw new AppError(
         HttpErrorCode.BadRequest,
-        'Error inserting product.',
+        `Error inserting ${ this.name }.`,
         false,
       );
     return insertResult;
@@ -42,7 +45,7 @@ export default class Service {
     if (!result) {
       throw new AppError(
         HttpErrorCode.NotFound,
-        `Product with id "${id}" not found.`,
+        `${ this.name } with id "${id}" not found.`,
         false,
       );
     }
@@ -65,7 +68,7 @@ export default class Service {
     if (!result.value) {
       throw new AppError(
         HttpErrorCode.NotFound,
-        `Product with id "${id}" not found.`,
+        `${ this.name } with id "${id}" not found.`,
         false,
       );
     }
@@ -79,7 +82,7 @@ export default class Service {
     if (!result.value) {
       throw new AppError(
         HttpErrorCode.NotFound,
-        `Product with id "${id}" not found.`,
+        `${ this.name } with id "${id}" not found.`,
         false,
       );
     }

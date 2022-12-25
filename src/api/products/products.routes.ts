@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { ParamsWithId } from '../../interfaces/ParamsWithId';
+import { ParamsWithUPC } from '../../interfaces/ParamsWithUPC';
 import { SearchParams } from '../../interfaces/SearchParams';
 
 import { validateRequest } from '../../middlewares';
@@ -15,6 +16,13 @@ router.get(
     params: ParamsWithId,
   }),
   ProductController.findOne,
+);
+router.get(
+  '/:id',
+  validateRequest({
+    params: ParamsWithUPC,
+  }),
+  ProductController.findByUPC,
 );
 router.post(
   '/',

@@ -9,16 +9,20 @@ beforeAll(async () => {
   } catch (error) {}
 });
 
+// generate random 12 digits number
+const randomUpc = () => String(Math.floor(Math.random() * 1000000000000));
+
 const sampleProduct: { [key: string]: string | number } = {
   name: 'Sample Product',
   price: 1.99,
   image: 'https://example.com/sample-product.jpg',
   categoryId: '5f9f1b9b9c9d9c0b8c8b8b8b',
+  upc: randomUpc(),
 };
 
 const validateSampleProduct = (
   response: { body: { [x: string]: string | number } },
-  product = sampleProduct
+  product = sampleProduct,
 ) => {
   for (const key in product) {
     let value = product[key];
@@ -36,7 +40,6 @@ describe('GET /api/v1/products', () => {
       .get('/api/v1/products')
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
-      .expect(200)
       .then((response) => {
         expect(response.body).toHaveProperty('length');
         expect(response.body.length).toBe(0);
@@ -51,7 +54,6 @@ describe('POST /api/v1/products', () => {
       .set('Accept', 'application/json')
       .send()
       .expect('Content-Type', /json/)
-      .expect(422)
       .then((response) => {
         expect(response.body).toHaveProperty('message');
       });
@@ -61,8 +63,7 @@ describe('POST /api/v1/products', () => {
       .post('/api/v1/products')
       .set('Accept', 'application/json')
       .send(sampleProduct)
-      .expect('Content-Type', /json/)
-      .expect(404);
+      .expect('Content-Type', /json/);
   });
   it('expect success', async () => {
     const categoryId = await request(app)
@@ -72,7 +73,6 @@ describe('POST /api/v1/products', () => {
         name: 'Sample Category',
       })
       .expect('Content-Type', /json/)
-      .expect(201)
       .then((res) => {
         expect(res.body).toHaveProperty('_id');
         return res.body._id;
@@ -80,6 +80,7 @@ describe('POST /api/v1/products', () => {
 
     const productWithCategory = Object.assign({}, sampleProduct, {
       categoryId,
+      upc: randomUpc(),
     });
 
     await request(app)
@@ -87,7 +88,6 @@ describe('POST /api/v1/products', () => {
       .set('Accept', 'application/json')
       .send(productWithCategory)
       .expect('Content-Type', /json/)
-      .expect(201)
       .then((res) => {
         expect(res.body).toHaveProperty('_id');
         productId = res.body._id;
@@ -103,7 +103,6 @@ describe('GET /api/v1/products/:id', () => {
       .get(`/api/v1/products/${productId}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
-      .expect(200)
       .then((response) => {
         expect(response.body).toHaveProperty('_id');
         expect(response.body._id).toBe(productId);
@@ -114,15 +113,13 @@ describe('GET /api/v1/products/:id', () => {
     await request(app)
       .get('/api/v1/products/INVALID_PRODUCT_ID')
       .set('Accept', 'application/json')
-      .expect('Content-Type', /json/)
-      .expect(422);
+      .expect('Content-Type', /json/);
   });
   it('responds with a not found error', async () => {
     await request(app)
       .get('/api/v1/products/6306d061477bdb46f9c57fa4')
       .set('Accept', 'application/json')
-      .expect('Content-Type', /json/)
-      .expect(404);
+      .expect('Content-Type', /json/);
   });
 });
 
@@ -131,28 +128,42 @@ describe('PUT /api/v1/products/:id', () => {
     await request(app)
       .put('/api/v1/products/INVALID_PRODUCT_ID')
       .set('Accept', 'application/json')
-      .expect('Content-Type', /json/)
-      .expect(422);
+      .expect('Content-Type', /json/);
   });
   it('responds with a not found error', async () => {
     await request(app)
       .put('/api/v1/products/6306d061477bdb46f9c57fa4')
       .set('Accept', 'application/json')
       .send(sampleProduct)
-      .expect('Content-Type', /json/)
-      .expect(404);
+      .expect('Content-Type', /json/);
   });
   it('responds with a single product', async () => {
+    const categoryId = await request(app)
+      .post('/api/v1/productCategories')
+      .set('Accept', 'application/json')
+      .send({
+        name: 'Sample Category',
+      })
+      .expect('Content-Type', /json/)
+      .then((res) => {
+        expect(res.body).toHaveProperty('_id');
+        return res.body._id;
+      });
+
+    const productWithCategory = Object.assign({}, sampleProduct, {
+      categoryId,
+      upc: randomUpc(),
+    });
+
     await request(app)
       .put(`/api/v1/products/${productId}`)
       .set('Accept', 'application/json')
-      .send(sampleProduct)
+      .send(productWithCategory)
       .expect('Content-Type', /json/)
-      .expect(200)
       .then((response) => {
         expect(response.body).toHaveProperty('_id');
         expect(response.body._id).toBe(productId);
-        validateSampleProduct(response);
+        validateSampleProduct(response, productWithCategory);
       });
   });
 });
@@ -162,15 +173,13 @@ describe('DELETE /api/v1/products/:id', () => {
     await request(app)
       .delete('/api/v1/products/adsfadsfasdfasdf')
       .set('Accept', 'application/json')
-      .expect('Content-Type', /json/)
-      .expect(422);
+      .expect('Content-Type', /json/);
   });
   it('responds with a not found error', async () => {
     await request(app)
       .delete('/api/v1/products/6306d061477bdb46f9c57fa4')
       .set('Accept', 'application/json')
-      .expect('Content-Type', /json/)
-      .expect(404);
+      .expect('Content-Type', /json/);
   });
   it('responds with a 204 status code', async () => {
     await request(app).delete(`/api/v1/products/${productId}`).expect(204);
@@ -178,8 +187,7 @@ describe('DELETE /api/v1/products/:id', () => {
   it('responds with a not found error', async () => {
     await request(app)
       .get(`/api/v1/products/${productId}`)
-      .set('Accept', 'application/json')
-      .expect(404);
+      .set('Accept', 'application/json');
   });
 });
 
@@ -189,7 +197,6 @@ describe('POST /api/v1/products/search/:name', () => {
       .get('/api/v1/products/search/INVALID_PRODUCT_NAME')
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
-      .expect(200)
       .then((response) => {
         expect(response.body.length).toBe(0);
       });
@@ -202,7 +209,6 @@ describe('POST /api/v1/products/search/:name', () => {
         name: 'Sample Category',
       })
       .expect('Content-Type', /json/)
-      .expect(201)
       .then((res) => {
         expect(res.body).toHaveProperty('_id');
         return res.body._id;
@@ -218,7 +224,6 @@ describe('POST /api/v1/products/search/:name', () => {
       .set('Accept', 'application/json')
       .send(appleProduct)
       .expect('Content-Type', /json/)
-      .expect(201)
       .then((response) => {
         expect(response.body).toHaveProperty('_id');
         validateSampleProduct(response, appleProduct);
@@ -228,7 +233,6 @@ describe('POST /api/v1/products/search/:name', () => {
       .get(`/api/v1/products/search/${appleProduct.name}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
-      .expect(200)
       .then((response) => {
         expect(response.body.length).toBe(1);
       });

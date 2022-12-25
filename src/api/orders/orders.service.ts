@@ -1,12 +1,17 @@
 import { Orders, Order } from './orders.model';
 import utils from 'utils';
+import { CRUDService } from '../service';
 
 // Extract classes and enums from utils
 const { classes, enums } = utils;
 const { AppError } = classes;
 const { HttpErrorCode } = enums;
 
-export default class OrderService {
+export default class OrderService extends CRUDService {
+  constructor() {
+    super(Orders, Order, 'Order');
+  }
+
   // generate order number start with 1 check database for last order number and increment
   async generateOrderNumber() {
     const lastOrder = await Orders.find().sort({ number: -1 }).limit(1).toArray();

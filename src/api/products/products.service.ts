@@ -1,7 +1,7 @@
 import { Products, Product } from './products.model';
 import { ObjectId } from 'mongodb';
 import utils from 'utils';
-import Service from '../service';
+import { CRUDService } from '../service';
 
 import ProductCategoryService from '../productCategories/productCategories.service';
 
@@ -10,31 +10,54 @@ const { classes, enums } = utils;
 const { AppError } = classes;
 const { HttpErrorCode } = enums;
 
-export default class ProductService extends Service {
+export default class ProductService extends CRUDService {
   constructor() {
-    super(Products, Product);
+    super(Products, Product, 'Product');
   }
 
   async createOne(data: Product) {
     // validate categoryId if it exists in the database
-    if (data.categoryId) {
-      const productCategoryService = new ProductCategoryService();
-      try {
-        await productCategoryService.findOne(data.categoryId);
-      } catch (e) {
-        if (e instanceof AppError && e.httpCode === HttpErrorCode.NotFound) {
-          throw new AppError(
-            HttpErrorCode.NotFound,
-            `Product category with id "${data.categoryId}" not found.`,
-            false,
-          );
-        }
-      }
-    }
+    const productCategoryService = new ProductCategoryService();
+    await productCategoryService.findOne(data.categoryId);
+
+    // check upc already exists then throw error
+    await this.validateAlreadyExistUPC(data.upc);
 
     const result = await super.createOne(data);
       
     return result;
+  }
+
+  async updateOne(id: string, data: Product) {
+    // get product data
+    const productData = await this.findOne(id);
+
+    // validate categoryId if it exists in the database
+    const productCategoryService = new ProductCategoryService();
+    await productCategoryService.findOne(data.categoryId);
+
+    // check upc already exists then throw error only if upc is changed
+    if (productData.upc !== data.upc) await this.validateAlreadyExistUPC(data.upc);
+
+    const result = await super.updateOne(id, data);
+    return result;
+  }
+
+  private async validateAlreadyExistUPC(upc: string | undefined) {
+    if (!upc) {
+      return;
+    }
+    const upcExists = await Products
+      .find({ upc: upc },
+      )
+      .toArray();
+    if (upcExists.length > 0) {
+      throw new AppError(
+        HttpErrorCode.BadRequest,
+        `Product with upc "${upc}" already exists.`,
+        false,
+      );
+    }
   }
 
   async search(query: string) {
@@ -91,5 +114,20 @@ export default class ProductService extends Service {
         false,
       );
     }
+  }
+
+  // find product by upc
+  async findByUPC(upc: string) {
+    const product = await Products.findOne({
+      upc,
+    });
+    if (!product) {
+      throw new AppError(
+        HttpErrorCode.NotFound,
+        `Product with upc "${upc}" not found.`,
+        false,
+      );
+    }
+    return product;
   }
 }
