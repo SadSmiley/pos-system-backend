@@ -35,6 +35,7 @@ export function notFound(req: Request, res: Response, next: NextFunction) {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function errorHandler(err: Error | AppError, req: Request, res: Response<ErrorResponse>, next: NextFunction) {
+  console.error(err);
   const statusCode = res.statusCode !== 200 ? res.statusCode : 500;
   if (err instanceof AppError) {
     res.status(err.httpCode);

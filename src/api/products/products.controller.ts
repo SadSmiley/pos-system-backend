@@ -92,9 +92,9 @@ export async function search(
   }
 }
 
-export async function findByUPC(req: Request<{}, ProductWithId, ParamsWithUPC>, res: Response<ProductWithId>, next: NextFunction) {
+export async function findByUPC(req: Request<ParamsWithUPC, ProductWithId, {}>, res: Response<ProductWithId>, next: NextFunction) {
   try {
-    const products = await ProductServiceInstance.findByUPC(req.body.upc);
+    const products = await ProductServiceInstance.findByUPC(req.params.upc);
     res.json(products);
   }
   catch (error) {

@@ -6,10 +6,10 @@ import { db } from '../../db';
 export const Product = z.object({
   name: z.string().min(1).trim(),
   price: z.number().min(0),
-  image: z.string().min(1).trim().default(''),
-  upc: z.string().min(1).optional(),
+  image: z.string().trim().optional(),
+  upc: z.string().optional(),
   countInStock: z.number().min(0).default(0),
-  categoryId: z.string().min(1).trim().refine((val) => {
+  categoryId: z.string().min(1).trim().optional().refine((val) => {
     try {
       return new ObjectId(val);
     } catch (error) {

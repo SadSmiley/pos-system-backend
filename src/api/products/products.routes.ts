@@ -18,7 +18,7 @@ router.get(
   ProductController.findOne,
 );
 router.get(
-  '/:id',
+  '/upc/:upc',
   validateRequest({
     params: ParamsWithUPC,
   }),

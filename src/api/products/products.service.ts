@@ -17,8 +17,7 @@ export default class ProductService extends CRUDService {
 
   async createOne(data: Product) {
     // validate categoryId if it exists in the database
-    const productCategoryService = new ProductCategoryService();
-    await productCategoryService.findOne(data.categoryId);
+    await this.validateProductCategory(data.categoryId);
 
     // check upc already exists then throw error
     await this.validateAlreadyExistUPC(data.upc);
@@ -33,8 +32,7 @@ export default class ProductService extends CRUDService {
     const productData = await this.findOne(id);
 
     // validate categoryId if it exists in the database
-    const productCategoryService = new ProductCategoryService();
-    await productCategoryService.findOne(data.categoryId);
+    await this.validateProductCategory(data.categoryId);
 
     // check upc already exists then throw error only if upc is changed
     if (productData.upc !== data.upc) await this.validateAlreadyExistUPC(data.upc);
@@ -129,5 +127,12 @@ export default class ProductService extends CRUDService {
       );
     }
     return product;
+  }
+
+  // validate category id
+  async validateProductCategory(categoryId: string | undefined) {
+    if (!categoryId) return;
+    const productCategoryService = new ProductCategoryService();
+    await productCategoryService.findOne(categoryId);
   }
 }
