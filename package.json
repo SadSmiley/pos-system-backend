@@ -8,8 +8,7 @@
     "dev": "nodemon src/index.ts",
     "build": "tsc",
     "lint": "eslint --fix src test",
-    "test": "jest",
-    "preinstall": "rm-local-modules"
+    "test": "jest"
   },
   "keywords": [],
   "author": "Edward Guevarra <edwardguevarra2003@gmail.com> (https://sadsmiley.github.io)",
@@ -25,7 +24,6 @@
     "helmet": "^5.1.1",
     "mongodb": "^4.9.0",
     "morgan": "^1.10.0",
-    "utils": "file:./local_modules/utils",
     "zod": "^3.18.0"
   },
   "devDependencies": {
@@ -43,7 +41,6 @@
     "eslint-plugin-import": "^2.26.0",
     "jest": "^28.1.3",
     "nodemon": "^2.0.19",
-    "rm-local-modules": "0.0.1",
     "supertest": "^6.2.4",
     "ts-jest": "^28.0.8",
     "ts-node": "^10.9.1",

@@ -1,5 +1,5 @@
 import { Orders, Order } from './orders.model';
-import utils from 'utils';
+import utils from '../../utils';
 import { CRUDService } from '../service';
 
 // Extract classes and enums from utils

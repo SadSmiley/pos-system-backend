@@ -1,4 +1,4 @@
-import utils from 'utils';
+import utils from '../utils';
 import { ObjectId } from 'mongodb';
 
 // Extract classes and enums from utils

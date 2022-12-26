@@ -1,6 +1,6 @@
 import { Products, Product } from './products.model';
 import { ObjectId } from 'mongodb';
-import utils from 'utils';
+import utils from '../../utils';
 import { CRUDService } from '../service';
 
 import ProductCategoryService from '../productCategories/productCategories.service';

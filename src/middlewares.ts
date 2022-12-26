@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { AppError } from 'utils/lib/classes';
+import { AppError } from './utils/classes';
 import { ZodError } from 'zod';
 
 import ErrorResponse from './interfaces/ErrorResponse';
