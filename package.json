@@ -25,7 +25,7 @@
     "helmet": "^5.1.1",
     "mongodb": "^4.9.0",
     "morgan": "^1.10.0",
-    "utils": "file:../local_modules/utils",
+    "utils": "file:./local_modules/utils",
     "zod": "^3.18.0"
   },
   "devDependencies": {
