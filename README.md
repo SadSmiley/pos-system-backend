@@ -11,7 +11,7 @@ List of tasks for this side project
 - [ ] Reverse Search Image
 ### In Progress
 
-
+- [ ] Price Checker Module
 ### Done ✓
 
 - [x] Products
