@@ -4,14 +4,15 @@ List of tasks for this side project
 
 ### Todo
 
-- [ ] Find Product via UPC (Barcode Scanning)
+- [ ] Barcode Scanning via Camera 
 - [ ] View Order List
 - [ ] Edit Order and Transactions 
 - [ ] Integrate G-Cash Payment API
 - [ ] Reverse Search Image
 ### In Progress
 
-- [ ] Price Checker Module
+- [ ] Edit / View Product
+
 ### Done ✓
 
 - [x] Products
@@ -23,6 +24,7 @@ List of tasks for this side project
   - [x] Delete
 - [x] Add Categories in Product Module
 - [x] Check Last Order Number
+- [x] Price Checker Module
 
 # Express API Server for POS System
 
