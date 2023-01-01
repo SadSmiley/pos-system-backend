@@ -1,20 +1,14 @@
-# Backend API
-[a link](https://github.com/gtplusnet/geer-payroll-system-backend)
-
 # TODO List
 
 List of tasks for this side project
 
 ### Todo
 
-- [ ] Barcode Scanning via Camera 
 - [ ] View Order List
 - [ ] Edit Order and Transactions 
 - [ ] Integrate G-Cash Payment API
 - [ ] Reverse Search Image
 ### In Progress
-
-- [ ] Edit / View Product
 
 ### Done ✓
 
