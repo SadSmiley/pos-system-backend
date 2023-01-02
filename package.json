@@ -9,7 +9,7 @@
     "build": "tsc",
     "lint": "eslint --fix src test",
     "test": "jest",
-    "serve": "npm run build && node dist/index.js"
+    "serve": "node dist/index.js"
   },
   "keywords": [],
   "author": "Edward Guevarra <edwardguevarra2003@gmail.com> (https://sadsmiley.github.io)",
