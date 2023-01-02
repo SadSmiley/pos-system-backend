@@ -12,7 +12,8 @@
   "extends": "airbnb-typescript/base",
   "plugins": [
     "import",
-    "@typescript-eslint"
+    "@typescript-eslint",
+    "prettier"
   ],
   "rules": {
     "comma-dangle": 0,
